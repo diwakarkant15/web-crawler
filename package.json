@@ -2,6 +2,7 @@
   "name": "webcrawlerhttp",
   "version": "1.0.0",
   "description": "Custom Web crawler",
+  "type":"commonjs",
   "main": "main.js",
   "scripts": {
     "test": "jest",
