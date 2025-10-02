@@ -2,7 +2,7 @@
   "name": "webcrawlerhttp",
   "version": "1.0.0",
   "description": "Custom Web crawler",
-  "type":"commonjs",
+  "type": "commonjs",
   "main": "main.js",
   "scripts": {
     "test": "jest",
@@ -26,5 +26,8 @@
   "homepage": "https://github.com/diwakarkant15/web-crawler#readme",
   "devDependencies": {
     "jest": "^30.2.0"
+  },
+  "dependencies": {
+    "jsdom": "^27.0.0"
   }
 }
