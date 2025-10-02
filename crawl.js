@@ -44,4 +44,25 @@ function getHTML_URL(htmlBody, baseURL){
     return url;   
 }
 
-module.exports = {normalizeURL, getHTML_URL};
+async function crawler(baseURL){
+    try{
+    console.log(`actively crawling ${baseURL}`);
+    
+    const resp = await fetch(baseURL);
+    if(resp.status > 399) {
+        console.log(`Error in fetching with status : ${resp.status} on ${baseURL}`);
+        return;
+    }
+    const contentType = resp.headers.get('content-type');
+    if(!contentType.includes('text/html')){
+         console.log(`response is non-html`);
+         return;
+    }
+   // console.log(await resp.text());
+    }catch(e){
+        console.log(`Error in fetching : ${e.message} on ${baseURL}`);
+        
+    }
+}
+
+module.exports = {normalizeURL, getHTML_URL, crawler};
