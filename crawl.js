@@ -16,53 +16,70 @@ function normalizeURL(url){
     return hostPath;
 }
 
-function getHTML_URL(htmlBody, baseURL){
-    let url = [];
+function getHTML_URL(htmlBody, baseURL) {
+    let urls = [];
     const dom = new JSDOM(htmlBody);
     const urlLinks = dom.window.document.querySelectorAll('a');
-    for(const urlLink of urlLinks){
-        const urls = urlLink.href;
-        if(urls[0] === '/') {
-            try{
-            const objURL = new URL(`${baseURL}${urls}`);
-            url.push(objURL.href);
-            }catch(e){
-                console.log(`Error : ${e.message}`);
-            }
+
+    for (const urlLink of urlLinks) {
+        const href = urlLink.getAttribute("href");
+        if (!href) continue; // skip empty or malformed links
+
+        try {
+            const objURL = new URL(href, baseURL); // resolves both absolute and relative
+            urls.push(objURL.href);
+        } catch (e) {
+            console.log(`Error parsing URL: ${e.message} -> ${href}`);
         }
-        else{
-            try{
-                const objURL = new URL(urls);
-                url.push(objURL.href);
-            }catch(e){
-                console.log(`Error : ${e.message}`);
-                
-            }
-        }
-        
     }
-    return url;   
+    return urls;
 }
 
-async function crawler(baseURL){
-    try{
+
+async function crawler(baseURL, currentURL, pages){
+
+    const baseURLObj = new URL(baseURL);
+    const currentURLObj = new URL(currentURL);
+    if(baseURLObj.hostname !== currentURLObj.hostname){
+        return pages;
+    }
+
+    const normalizedCurrentURL = normalizeURL(currentURL);
+    if(pages[normalizedCurrentURL] > 0){
+        pages[normalizedCurrentURL]++;
+        return pages;
+    }
+
+    pages[normalizedCurrentURL] = 1;
+
     console.log(`actively crawling ${baseURL}`);
-    
-    const resp = await fetch(baseURL);
+
+    try{    
+    const resp = await fetch(currentURL);
     if(resp.status > 399) {
-        console.log(`Error in fetching with status : ${resp.status} on ${baseURL}`);
-        return;
+        console.log(`Error in fetching with status : ${resp.status} on ${currentURL}`);
+        return pages;
     }
     const contentType = resp.headers.get('content-type');
     if(!contentType.includes('text/html')){
          console.log(`response is non-html`);
-         return;
+         return pages;
     }
+
+    const htmlBody = await resp.text();
+    const nextURLs = getHTML_URL(htmlBody, currentURL);
+
+    for(const nextURL of nextURLs){
+        pages = await crawler(baseURL, nextURL, pages);
+    }
+
    // console.log(await resp.text());
     }catch(e){
-        console.log(`Error in fetching : ${e.message} on ${baseURL}`);
+        console.log(`Error in fetching : ${e.message} on ${currentURL}`);
         
     }
+
+    return pages;
 }
 
 module.exports = {normalizeURL, getHTML_URL, crawler};
