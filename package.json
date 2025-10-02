@@ -1,0 +1,29 @@
+{
+  "name": "webcrawlerhttp",
+  "version": "1.0.0",
+  "description": "Custom Web crawler",
+  "main": "main.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diwakarkant15/web-crawler.git"
+  },
+  "keywords": [
+    "webcrawler",
+    "scraping",
+    "crawler",
+    "seo"
+  ],
+  "author": "Diwakar Kant",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diwakarkant15/web-crawler/issues"
+  },
+  "homepage": "https://github.com/diwakarkant15/web-crawler#readme",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}
